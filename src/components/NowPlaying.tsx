@@ -260,7 +260,8 @@ const NowPlaying: React.FC = () => {
            background: 'linear-gradient(to top, #1f1f1f 0%, #242424 100%)', 
            borderTop: '2px solid #3a3a3a',
            boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.5)',
-           zIndex: 30
+           zIndex: 30,
+           minHeight: '140px'
          }}>
       <audio 
         ref={audioRef} 
@@ -271,56 +272,193 @@ const NowPlaying: React.FC = () => {
       <div className="px-4 py-3 md:px-8 md:py-4">
         {/* Main Player Row */}
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-8">
-          {/* Mobile: Compact layout */}
-          <div className="flex md:hidden items-center gap-3 w-full">
-            {/* Album Art - Smaller on mobile */}
-            {albumArt && (
-              <img 
-                src={albumArt} 
-                alt={song.name}
-                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                style={{ 
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
-                  border: '1px solid #3a3a3a'
-                }}
-              />
-            )}
-            
-            {/* Song Info */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm truncate" 
-                  style={{ color: '#e5e5e5' }}
-                  title={song.name}>
-                {song.name}
-              </h3>
-              <p className="text-xs truncate" 
-                 style={{ color: '#FFB84D' }}
-                 title={formatArtistNames(song.artists)}>
-                {formatArtistNames(song.artists)}
-              </p>
+          {/* Mobile: Spotify-style Full Controls */}
+          <div className="flex md:hidden flex-col w-full gap-4">
+            {/* Top Row: Song Info */}
+            <div className="flex items-center gap-3 w-full">
+              {/* Album Art */}
+              {albumArt && (
+                <img 
+                  src={albumArt} 
+                  alt={song.name}
+                  className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                  style={{ 
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+                    border: '1px solid #3a3a3a'
+                  }}
+                />
+              )}
+              
+              {/* Song Info */}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-base truncate" 
+                    style={{ color: '#e5e5e5' }}
+                    title={song.name}>
+                  {song.name}
+                </h3>
+                <p className="text-sm truncate" 
+                   style={{ color: '#FFB84D' }}
+                   title={formatArtistNames(song.artists)}>
+                  {formatArtistNames(song.artists)}
+                </p>
+              </div>
             </div>
 
-            {/* Play/Pause Button */}
-            <button
-              onClick={togglePlayPause}
-              className="p-2 rounded-full transition-all flex-shrink-0"
-              style={{ 
-                background: 'linear-gradient(135deg, #FFB84D 0%, #FF8F00 100%)',
-                color: '#1a1a1a',
-                border: '2px solid #FFB84D'
-              }}
-              title={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            {/* Progress Bar */}
+            <div className="flex items-center gap-2 w-full">
+              <span className="text-xs font-bold tabular-nums" style={{ color: '#FFB84D', minWidth: '40px' }}>
+                {formatTime(currentTime)}
+              </span>
+              
+              <div 
+                className="relative flex-1 h-1.5 rounded-full cursor-pointer"
+                style={{ background: 'rgba(255, 184, 77, 0.2)' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const audio = audioRef.current;
+                  if (!audio || duration <= 0) return;
+                  
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const clickX = e.clientX - rect.left;
+                  const percentage = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
+                  const newTime = (percentage / 100) * duration;
+                  
+                  audio.currentTime = newTime;
+                  setCurrentTime(newTime);
+                }}
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                  const audio = audioRef.current;
+                  if (!audio || duration <= 0) return;
+                  
+                  const touch = e.touches[0];
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const touchX = touch.clientX - rect.left;
+                  const percentage = Math.max(0, Math.min(100, (touchX / rect.width) * 100));
+                  const newTime = (percentage / 100) * duration;
+                  
+                  audio.currentTime = newTime;
+                  setCurrentTime(newTime);
+                }}
+                onTouchMove={(e) => {
+                  if (!isDragging) return;
+                  e.preventDefault();
+                  const audio = audioRef.current;
+                  if (!audio || duration <= 0) return;
+                  
+                  const touch = e.touches[0];
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const touchX = touch.clientX - rect.left;
+                  const percentage = Math.max(0, Math.min(100, (touchX / rect.width) * 100));
+                  const newTime = (percentage / 100) * duration;
+                  
+                  audio.currentTime = newTime;
+                  setCurrentTime(newTime);
+                }}
+                onTouchEnd={() => setIsDragging(false)}
+              >
+                <div 
+                  className="absolute top-0 left-0 h-full rounded-full"
+                  style={{ 
+                    width: `${progress}%`,
+                    background: 'linear-gradient(90deg, #FFB84D 0%, #FF8F00 100%)',
+                    transition: isDragging ? 'none' : 'width 0.1s linear'
+                  }}
+                />
+              </div>
+
+              <span className="text-xs font-bold tabular-nums" style={{ color: '#FF8F00', minWidth: '40px', textAlign: 'right' }}>
+                {formatTime(duration)}
+              </span>
+            </div>
+
+            {/* Control Buttons */}
+            <div className="flex items-center justify-between w-full">
+              {/* Repeat Button */}
+              <button
+                onClick={cycleRepeat}
+                className="p-2.5 rounded-full transition-all"
+                style={{ 
+                  background: state.repeat !== 'none' ? 'linear-gradient(135deg, #FFB84D 0%, #FF8F00 100%)' : 'rgba(255, 184, 77, 0.15)',
+                  color: state.repeat !== 'none' ? '#1a1a1a' : '#FFB84D',
+                  border: '2px solid ' + (state.repeat !== 'none' ? '#FFB84D' : 'rgba(255, 184, 77, 0.4)'),
+                  boxShadow: state.repeat !== 'none' ? '0 2px 8px rgba(255, 143, 0, 0.4)' : 'none'
+                }}
+              >
+                {state.repeat === 'one' ? (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
+                  </svg>
+                )}
+              </button>
+
+              {/* Previous */}
+              <button
+                onClick={playPrevious}
+                className="p-3 rounded-full transition-all"
+                style={{ 
+                  background: 'rgba(255, 184, 77, 0.15)',
+                  border: '2px solid rgba(255, 184, 77, 0.4)'
+                }}
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#FFB84D' }}>
+                  <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
                 </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
+              </button>
+
+              {/* Play/Pause */}
+              <button
+                onClick={togglePlayPause}
+                className="p-4 rounded-full transition-all active:scale-95"
+                style={{ 
+                  background: 'linear-gradient(135deg, #FFB84D 0%, #FF8F00 100%)',
+                  color: '#1a1a1a',
+                  border: '2px solid #FFB84D',
+                  boxShadow: '0 4px 12px rgba(255, 143, 0, 0.5)'
+                }}
+              >
+                {isPlaying ? (
+                  <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                  </svg>
+                ) : (
+                  <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                )}
+              </button>
+
+              {/* Next */}
+              <button
+                onClick={playNext}
+                className="p-3 rounded-full transition-all"
+                style={{ 
+                  background: 'rgba(255, 184, 77, 0.15)',
+                  border: '2px solid rgba(255, 184, 77, 0.4)'
+                }}
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#FFB84D' }}>
+                  <path d="M16 18h2V6h-2v12zM6 18l8.5-6L6 6v12z" />
                 </svg>
+              </button>
+
+              {/* Queue Info */}
+              {state.queue.length > 0 && (
+                <div className="px-2.5 py-1.5 rounded-full text-xs font-bold"
+                     style={{ 
+                       background: 'linear-gradient(135deg, #FFB84D 0%, #FF8F00 100%)',
+                       color: '#1a1a1a',
+                       border: '2px solid #FFB84D'
+                     }}>
+                  {state.queue.length}
+                </div>
               )}
-            </button>
+            </div>
           </div>
 
           {/* Desktop: Full layout */}

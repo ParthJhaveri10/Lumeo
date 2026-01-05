@@ -118,7 +118,7 @@ const App: React.FC = () => {
         {/* Main Content Area - Full width on mobile, beside sidebar on desktop */}
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Content - with bottom padding on mobile for nav + player */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-10 pb-[200px] md:pb-24" style={{ 
+          <div className="flex-1 overflow-y-auto p-4 md:p-10 pb-[240px] md:pb-24" style={{ 
             background: 'linear-gradient(135deg, rgba(26, 20, 16, 0.6) 0%, rgba(45, 36, 22, 0.4) 100%)'
           }}>
             {activeView === 'home' && (

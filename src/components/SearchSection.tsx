@@ -32,6 +32,21 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
   const [mobileMenuSong, setMobileMenuSong] = useState<any | null>(null);
 
   /**
+   * Clean up song/album/playlist names - remove "Trending Version" and similar suffixes
+   */
+  const cleanName = useCallback((name: string): string => {
+    if (!name) return '';
+    return name
+      .replace(/\s*\(Trending Version\)/gi, '')
+      .replace(/\s*\(Trending\)/gi, '')
+      .replace(/\s*\[Trending Version\]/gi, '')
+      .replace(/\s*\[Trending\]/gi, '')
+      .replace(/Trending Version/gi, '')
+      .replace(/Trending/gi, '')
+      .trim();
+  }, []);
+
+  /**
    * Decode HTML entities in strings
    */
   const decodeHtmlEntities = (text: string): string => {
@@ -46,6 +61,13 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
     }
     return decoded;
   };
+
+  /**
+   * Clean and decode text - removes HTML entities and trending suffixes
+   */
+  const cleanAndDecode = useCallback((text: string): string => {
+    return cleanName(decodeHtmlEntities(text));
+  }, [cleanName]);
 
   // Search hooks
   const search = useSearch();
@@ -285,16 +307,6 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
     const albumArt = item.image?.[2]?.url || item.image?.[1]?.url || item.image?.[0]?.url || '';
     const duration = item.duration ? Math.floor(item.duration / 60) + ':' + String(Math.floor(item.duration % 60)).padStart(2, '0') : '';
     
-    // Clean up song/album/playlist names - remove "Trending Version" and similar suffixes
-    const cleanName = (name: string) => {
-      return name
-        .replace(/\s*\(Trending Version\)/gi, '')
-        .replace(/\s*\(Trending\)/gi, '')
-        .replace(/\s*\[Trending Version\]/gi, '')
-        .replace(/\s*\[Trending\]/gi, '')
-        .trim();
-    };
-    
     return (
       <div
         key={item.id}
@@ -368,50 +380,42 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
 
           {/* Mobile Menu Button */}
           {(type === 'songs' || type === 'song') && (
-            <button
-              className="absolute top-3 right-3 md:hidden w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all z-10"
-              style={{
-                background: 'rgba(0, 0, 0, 0.8)',
-                border: '1px solid rgba(255, 184, 77, 0.3)'
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setMobileMenuSong(mobileMenuSong?.id === item.id ? null : item);
-              }}
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#FFB84D' }}>
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-              </svg>
-            </button>
-          )}
-
-          {/* Mobile Dropdown Menu */}
-          {(type === 'songs' || type === 'song') && mobileMenuSong?.id === item.id && (
-            <div
-              className="absolute top-12 right-3 md:hidden rounded-lg shadow-2xl overflow-hidden z-20"
-              style={{
-                background: '#1a1a1a',
-                border: '2px solid #FFB84D',
-                minWidth: '180px'
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <>
+              {/* Desktop: 3-dot menu (right-click preferred) */}
               <button
-                className="w-full px-4 py-3 text-left flex items-center gap-3 transition-colors"
+                className="absolute top-3 right-3 hidden md:flex w-8 h-8 rounded-full items-center justify-center backdrop-blur-md transition-all z-10 opacity-0 group-hover:opacity-100"
                 style={{
-                  color: '#e5e5e5',
-                  borderBottom: '1px solid #3a3a3a'
+                  background: 'rgba(0, 0, 0, 0.8)',
+                  border: '1px solid rgba(255, 184, 77, 0.3)'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#2a2a2a'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                onClick={() => handleAddToQueueFromMenu(item)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMobileMenuSong(mobileMenuSong?.id === item.id ? null : item);
+                }}
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#FFB84D' }}>
-                  <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
+                  <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                 </svg>
-                <span className="font-medium">Add to Queue</span>
               </button>
-            </div>
+
+              {/* Mobile: Add to Queue button (always visible) */}
+              <button
+                className="absolute bottom-3 right-3 md:hidden w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all z-10"
+                style={{
+                  background: 'linear-gradient(135deg, #FFB84D 0%, #FF8F00 100%)',
+                  border: '2px solid #FFB84D',
+                  boxShadow: '0 2px 8px rgba(255, 143, 0, 0.6)'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToQueueFromMenu(item);
+                }}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#1a1a1a' }}>
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+              </button>
+            </>
           )}
 
           {/* Duration Badge */}
@@ -463,8 +467,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
         <div className="p-5">
           <h3 className="font-bold text-lg mb-2 truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FFB84D] group-hover:to-[#FF8F00] transition-all"
               style={{ color: '#e5e5e5' }}
-              title={decodeHtmlEntities(cleanName(item.name || item.title || ''))}>
-            {decodeHtmlEntities(cleanName(item.name || item.title || ''))}
+              title={cleanAndDecode(item.name || item.title || '')}>
+            {cleanAndDecode(item.name || item.title || '')}
           </h3>
           
           <p className="text-sm mb-3 truncate"
@@ -511,7 +515,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
         </div>
       </div>
     );
-  }, [searchType, handleSongPlay, formatArtistNames, handleContextMenu]);
+  }, [searchType, handleSongPlay, formatArtistNames, handleContextMenu, cleanAndDecode]);
 
   /**
    * Render search results section
@@ -778,16 +782,6 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
                 const albumArt = song.image?.[2]?.url || song.image?.[1]?.url || song.image?.[0]?.url || '';
                 const duration = song.duration ? Math.floor(song.duration / 60) + ':' + String(Math.floor(song.duration % 60)).padStart(2, '0') : '';
                 
-                // Clean up song name - remove "Trending Version" and similar suffixes
-                const cleanSongName = (name: string) => {
-                  return name
-                    .replace(/\s*\(Trending Version\)/gi, '')
-                    .replace(/\s*\(Trending\)/gi, '')
-                    .replace(/\s*\[Trending Version\]/gi, '')
-                    .replace(/\s*\[Trending\]/gi, '')
-                    .trim();
-                };
-                
                 return (
                   <div
                     key={song.id}
@@ -852,14 +846,32 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
                           {duration}
                         </div>
                       )}
+
+                      {/* Mobile: Add to Queue button (always visible) */}
+                      <button
+                        className="absolute bottom-3 right-3 md:hidden w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all z-10"
+                        style={{
+                          background: 'linear-gradient(135deg, #FFB84D 0%, #FF8F00 100%)',
+                          border: '2px solid #FFB84D',
+                          boxShadow: '0 2px 8px rgba(255, 143, 0, 0.6)'
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToQueueFromMenu(song);
+                        }}
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" style={{ color: '#1a1a1a' }}>
+                          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        </svg>
+                      </button>
                     </div>
 
                     {/* Song Info */}
                     <div className="p-5">
                       <h3 className="font-bold text-lg mb-2 truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FFB84D] group-hover:to-[#FF8F00] transition-all"
                           style={{ color: '#e5e5e5' }}
-                          title={decodeHtmlEntities(cleanSongName(song.name || song.title || ''))}>
-                        {decodeHtmlEntities(cleanSongName(song.name || song.title || ''))}
+                          title={cleanAndDecode(song.name || song.title || '')}>
+                        {cleanAndDecode(song.name || song.title || '')}
                       </h3>
                       
                       <p className="text-sm mb-3 truncate"
