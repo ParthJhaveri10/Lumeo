@@ -1,4 +1,4 @@
-// Vercel serverless function - Proxy for Saavn API
+// Proxy for all API routes - handles /api/* requests
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -12,8 +12,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { path } = req.query;
-    const apiUrl = `https://saavn.sumit.co${path || ''}`;
+    // Extract the path after /api/ from the request URL
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const apiPath = url.pathname.replace(/^\/api/, ''); // Remove /api prefix
+    const queryString = url.search; // Get query string with ?
+    
+    const apiUrl = `https://saavn.sumit.co${apiPath}${queryString}`;
+    
+    console.log('Proxying request to:', apiUrl);
     
     const response = await fetch(apiUrl, {
       method: req.method,
@@ -26,6 +32,7 @@ export default async function handler(req, res) {
     const data = await response.json();
     res.status(response.status).json(data);
   } catch (error) {
+    console.error('Proxy error:', error);
     res.status(500).json({ error: 'Proxy error', message: error.message });
   }
 }
