@@ -89,8 +89,15 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
             seenNames.add(normalizedName);
             return true;
           });
+
+          // Sort by popularity (play count) in descending order
+          const sortedSongs = uniqueSongs.sort((a: any, b: any) => {
+            const aPlayCount = parseInt(a.playCount || a.play_count || '0');
+            const bPlayCount = parseInt(b.playCount || b.play_count || '0');
+            return bPlayCount - aPlayCount;
+          });
           
-          setRecommendations(uniqueSongs.slice(0, 12));
+          setRecommendations(sortedSongs.slice(0, 12));
         }
       } catch (error) {
         console.error('Failed to load recommendations:', error);
