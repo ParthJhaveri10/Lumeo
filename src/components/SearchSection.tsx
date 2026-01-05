@@ -637,18 +637,18 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
   return (
     <>
       {/* Search Input Section */}
-      <div className="rounded-2xl shadow-2xl p-8 mb-8" style={{ 
+      <div className="rounded-2xl shadow-2xl p-6 md:p-8 mb-6 md:mb-8" style={{ 
         background: '#242424',
         border: '2px solid #3a3a3a',
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)'
       }}>
-        <h2 className="text-3xl font-bold mb-6 flex items-center gap-3" style={{ 
+        <h2 className="text-2xl md:text-3xl font-bold mb-5 md:mb-6 flex items-center gap-3" style={{ 
           color: '#FFB84D'
         }}>
-          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
           </svg>
-          Discover Music
+          Search Music
         </h2>
         
         <div className="flex flex-col md:flex-row gap-4 mb-4">
@@ -659,7 +659,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Search for songs, artists, albums..."
+              placeholder="Search songs, artists, albums..."
               className="w-full px-6 py-5 rounded-xl outline-none transition-all text-lg"
               style={{ 
                 background: '#1a1a1a',
@@ -764,8 +764,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
                 <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
               </svg>
             </div>
-            <h2 className="text-3xl font-bold" style={{ color: '#e5e5e5' }}>
-              Recommended For You
+            <h2 className="text-2xl md:text-3xl font-bold" style={{ color: '#e5e5e5' }}>
+              Popular Right Now
             </h2>
           </div>
           

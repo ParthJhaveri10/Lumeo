@@ -110,7 +110,12 @@ const App: React.FC = () => {
 
           {/* Footer Info */}
           <div className="p-6 border-t" style={{ borderColor: '#3a3a3a' }}>
-            <p className="text-xs" style={{ color: '#a0a0a0' }}>✨ Powered by Saavn API</p>
+            <p className="text-xs flex items-center gap-1" style={{ color: '#a0a0a0' }}>
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              Powered by Saavn
+            </p>
             <p className="text-xs mt-1" style={{ color: '#FFB84D' }}>Lumeo v3.0.0</p>
           </div>
         </aside>
@@ -168,13 +173,13 @@ const App: React.FC = () => {
                     </h1>
                     <div className="flex items-center justify-center gap-2 md:gap-3 mb-4 md:mb-6">
                       <div className="hidden md:block" style={{ height: '2px', width: '60px', background: 'linear-gradient(90deg, transparent, #FFB84D, transparent)' }}></div>
-                      <p className="text-sm md:text-2xl" style={{ color: '#FFB84D', fontWeight: '600', letterSpacing: '2px' }}>
-                        RADIANT MUSIC
+                      <p className="text-sm md:text-xl" style={{ color: '#FFB84D', fontWeight: '600', letterSpacing: '1px' }}>
+                        YOUR MUSIC, YOUR WAY
                       </p>
                       <div className="hidden md:block" style={{ height: '2px', width: '60px', background: 'linear-gradient(90deg, transparent, #FFB84D, transparent)' }}></div>
                     </div>
-                    <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto px-4" style={{ color: '#a0a0a0', lineHeight: '1.8' }}>
-                      Where every beat shines bright. Discover millions of tracks in stunning quality.
+                    <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto px-4" style={{ color: '#a0a0a0', lineHeight: '1.7' }}>
+                      Listen to millions of songs instantly. No signup needed.
                     </p>
                   </div>
                 </div>
@@ -207,12 +212,16 @@ const App: React.FC = () => {
                     <div className="relative">
                       <div className="text-4xl md:text-6xl mb-3 md:mb-4 inline-block" style={{
                         filter: 'drop-shadow(0 0 20px rgba(255, 184, 77, 0.5))'
-                      }}>🎵</div>
+                      }}>
+                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+                        </svg>
+                      </div>
                       <h3 className="text-xl md:text-3xl font-bold mb-2 md:mb-3" style={{ color: '#FFB84D' }}>
-                        Premium Sound
+                        High Quality Audio
                       </h3>
-                      <p className="text-lg" style={{ color: '#a0a0a0', lineHeight: '1.6' }}>
-                        Experience music like never before with crystal-clear 320kbps streaming quality
+                      <p className="text-base md:text-lg" style={{ color: '#a0a0a0', lineHeight: '1.6' }}>
+                        Stream music in 320kbps quality. Sounds crisp on any device.
                       </p>
                       <div className="mt-4 flex gap-2">
                         {[1, 2, 3, 4, 5].map(i => (
@@ -241,12 +250,16 @@ const App: React.FC = () => {
                     <div className="relative">
                       <div className="text-4xl md:text-6xl mb-3 md:mb-4 inline-block" style={{
                         filter: 'drop-shadow(0 0 20px rgba(255, 143, 0, 0.5))'
-                      }}>🔥</div>
+                      }}>
+                        <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                        </svg>
+                      </div>
                       <h3 className="text-xl md:text-3xl font-bold mb-2 md:mb-3" style={{ color: '#FFB84D' }}>
-                        Instant Discovery
+                        Search Anything
                       </h3>
-                      <p className="text-lg" style={{ color: '#a0a0a0', lineHeight: '1.6' }}>
-                        Find any song, artist, or album in seconds with intelligent search
+                      <p className="text-base md:text-lg" style={{ color: '#a0a0a0', lineHeight: '1.6' }}>
+                        Type it in, hit enter. That's it.
                       </p>
                       <div className="mt-3 md:mt-4 flex gap-1 flex-wrap">
                         <div className="px-2 md:px-3 py-1 rounded-full text-xs" style={{ background: 'rgba(255, 184, 77, 0.2)', color: '#FFB84D' }}>Songs</div>
@@ -269,13 +282,13 @@ const App: React.FC = () => {
                       boxShadow: '0 8px 30px rgba(255, 143, 0, 0.4)'
                     }}
                   >
-                    <span className="relative z-10">Start Your Journey</span>
+                    <span className="relative z-10">Let's Go</span>
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{
                       background: 'linear-gradient(135deg, #FF8F00 0%, #FFB84D 100%)'
                     }}></div>
                   </button>
                   <p className="mt-4 text-sm" style={{ color: '#a0a0a0' }}>
-                    ✨ Millions of songs waiting for you
+                    No signup needed • Just start listening
                   </p>
                 </div>
 
