@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* Custom Color Variables - Warm Luminous Theme */
+:root {
+  /* Primary Colors */
+  --radiant-white: #FFFFFF;
+  --soft-cream: #FFF9F0;
+  --warm-glow: #FFE8C5;
+  
+  /* Accent Colors */
+  --sunset-gold: #FFB84D;
+  --amber-light: #FFA726;
+  --deep-amber: #FF8F00;
+  
+  /* Supporting Neutrals */
+  --light-gray: #F5F5F5;
+  --soft-shadow: #E0E0E0;
+  --charcoal: #2D2D2D;
+}
+
+/* Base Styles */
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #1a1410 0%, #2d2416 100%);
+  color: #e5e5e5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+/* Audio Player Slider Styles */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #3a3a3a;
+  outline: none;
+  border-radius: 4px;
+  height: 4px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #FFB84D;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: #FFF8E7;
+  transform: scale(1.2);
+}
+
+.slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #E8D4A0;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.slider::-moz-range-thumb:hover {
+  background: #FFF8E7;
+  transform: scale(1.2);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #3D2817;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8B6F47;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E8D4A0;
+}
