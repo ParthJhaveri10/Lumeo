@@ -285,6 +285,16 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
     const albumArt = item.image?.[2]?.url || item.image?.[1]?.url || item.image?.[0]?.url || '';
     const duration = item.duration ? Math.floor(item.duration / 60) + ':' + String(Math.floor(item.duration % 60)).padStart(2, '0') : '';
     
+    // Clean up song/album/playlist names - remove "Trending Version" and similar suffixes
+    const cleanName = (name: string) => {
+      return name
+        .replace(/\s*\(Trending Version\)/gi, '')
+        .replace(/\s*\(Trending\)/gi, '')
+        .replace(/\s*\[Trending Version\]/gi, '')
+        .replace(/\s*\[Trending\]/gi, '')
+        .trim();
+    };
+    
     return (
       <div
         key={item.id}
@@ -453,8 +463,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
         <div className="p-5">
           <h3 className="font-bold text-lg mb-2 truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FFB84D] group-hover:to-[#FF8F00] transition-all"
               style={{ color: '#e5e5e5' }}
-              title={decodeHtmlEntities(item.name || item.title || '')}>
-            {decodeHtmlEntities(item.name || item.title || '')}
+              title={decodeHtmlEntities(cleanName(item.name || item.title || ''))}>
+            {decodeHtmlEntities(cleanName(item.name || item.title || ''))}
           </h3>
           
           <p className="text-sm mb-3 truncate"
@@ -768,6 +778,16 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
                 const albumArt = song.image?.[2]?.url || song.image?.[1]?.url || song.image?.[0]?.url || '';
                 const duration = song.duration ? Math.floor(song.duration / 60) + ':' + String(Math.floor(song.duration % 60)).padStart(2, '0') : '';
                 
+                // Clean up song name - remove "Trending Version" and similar suffixes
+                const cleanSongName = (name: string) => {
+                  return name
+                    .replace(/\s*\(Trending Version\)/gi, '')
+                    .replace(/\s*\(Trending\)/gi, '')
+                    .replace(/\s*\[Trending Version\]/gi, '')
+                    .replace(/\s*\[Trending\]/gi, '')
+                    .trim();
+                };
+                
                 return (
                   <div
                     key={song.id}
@@ -838,8 +858,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onArtistClick }) => {
                     <div className="p-5">
                       <h3 className="font-bold text-lg mb-2 truncate group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#FFB84D] group-hover:to-[#FF8F00] transition-all"
                           style={{ color: '#e5e5e5' }}
-                          title={decodeHtmlEntities(song.name || song.title || '')}>
-                        {decodeHtmlEntities(song.name || song.title || '')}
+                          title={decodeHtmlEntities(cleanSongName(song.name || song.title || ''))}>
+                        {decodeHtmlEntities(cleanSongName(song.name || song.title || ''))}
                       </h3>
                       
                       <p className="text-sm mb-3 truncate"
